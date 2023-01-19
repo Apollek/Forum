@@ -6,6 +6,7 @@ import com.example.demo.ForumComment.ForumCommentWithUser;
 import com.example.demo.ForumComment.ForumCommentWithUserData;
 import com.example.demo.ForumPost.ForumPost;
 import com.example.demo.ForumPost.ForumPostRepository;
+import com.example.demo.User.User;
 import com.example.demo.User.UserId;
 import com.example.demo.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,14 @@ public class ForumPostService {
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
-    public ForumPostWithUserData getForumPost(String token, ForumPostContentRequestDTO forumPostContentRequestDTO){
+    public ForumPostWithUserData getForumPost(String token, Integer postId){
         ForumPostWithUserData postWithUserData;
-        if (token != null){
-            String email = jwtTokenUtil.getEmailFromToken(token);
+        String email = jwtTokenUtil.getEmailFromToken(token);
+        if (email != null){
             ForumPostWithUser post = userRepository.findUserIdByEmail(email)
-                    .map((UserId userId) ->
+                    .map((UserId userid) ->
                             forumPostRepository.findForumPostWithUserByPostId(
-                                    forumPostContentRequestDTO.postId(), userId.getId()
+                                    postId, userid.getId()
                             )
                             .orElseThrow(() -> new NullPointerException("No post was found"))
                     )
@@ -52,7 +53,7 @@ public class ForumPostService {
                     post.getItsMe(), 1,0
             );
         }else{
-            ForumPost post = this.forumPostRepository.findForumPostByPostId(forumPostContentRequestDTO.postId())
+            ForumPost post = this.forumPostRepository.findForumPostByPostId(postId)
                     .orElseThrow(() -> new NullPointerException("Post not found"));
 
             postWithUserData = new ForumPostWithUserData(

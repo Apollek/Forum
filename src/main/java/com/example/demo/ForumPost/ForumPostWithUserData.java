@@ -1,6 +1,11 @@
 package com.example.demo.ForumPost;
 
+import com.example.demo.ForumComment.ForumComment;
+import com.example.demo.User.User;
+
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ForumPostWithUserData {
     Integer id;
@@ -13,6 +18,8 @@ public class ForumPostWithUserData {
     Integer itsMe;
     Integer imAuthorized;
     Integer isLiked;
+    @OneToMany(mappedBy="post")
+    private List<ForumComment> comments;
 
     public ForumPostWithUserData(Integer id,
                                  String topicName,
@@ -72,7 +79,7 @@ public class ForumPostWithUserData {
         return imAuthorized;
     }
 
-    public Integer getLiked() {
+    public Integer getIsLiked() {
         return isLiked;
     }
 }
